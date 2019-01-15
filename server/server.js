@@ -26,10 +26,11 @@ io.on('connection', (socket) => { // server and client keep chanel for as long a
 // socket.broadcast.emit from admin to text new user joined
   socket.broadcast.emit('newMessage', generateMessage('Admin', 'New User joined!'));
 
-  socket.on('createMessage', (message) => { // this callback is the listener
+  socket.on('createMessage', (message, callback) => { // this callback is the listener
     console.log('createMessage', message);
     // emits to every single connection
     io.emit('newMessage', generateMessage(message.from, message.text));
+    callback('This is from the server'); // server gets data back
     // socket.broadcast.emit('newMessage', { // emit to everybody but this socket
     //   from: message.from,
     //   text: message.text,
