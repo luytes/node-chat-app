@@ -4,7 +4,7 @@ const express = require('express');
 const socketIO = require('socket.io');
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
-const {generateMessage} = require('./utilities/message');
+const {generateMessage, generateLocationMessage} = require('./utilities/message');
 
 
 var app = express();
@@ -31,11 +31,10 @@ io.on('connection', (socket) => { // server and client keep chanel for as long a
     // emits to every single connection
     io.emit('newMessage', generateMessage(message.from, message.text));
     callback('This is from the server'); // server gets data back
-    // socket.broadcast.emit('newMessage', { // emit to everybody but this socket
-    //   from: message.from,
-    //   text: message.text,
-    //   createdAt: new Date().getTime()
-    // });
+  });
+
+  socket.on('createLocationMessage', (coordinates) => {
+    io.emit('newLocationMessage', generateLocationMessage('Admin', coordinates.latitude, coordinates.longitude));
   });
 
   socket.on('disconnect', () => {
