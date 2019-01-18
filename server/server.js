@@ -30,7 +30,7 @@ io.on('connection', (socket) => { // server and client keep chanel for as long a
     console.log('createMessage', message);
     // emits to every single connection
     io.emit('newMessage', generateMessage(message.from, message.text));
-    callback('This is from the server'); // server gets data back
+    callback(); // server gets data back
   });
 
   socket.on('createLocationMessage', (coordinates) => {

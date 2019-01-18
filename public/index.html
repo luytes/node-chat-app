@@ -2,17 +2,18 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <link rel="stylesheet" href="/../app/assets/stylesheets/pages/application.scss">
   </head>
-  <body>
+  <body class="chat">
     <p>Chat App Landing page</p>
     <ol id="messages">
 
     </ol>
     <form id="message-from">
-      <input name="message" type="text" placeholder="Write your message">
+      <input name="message" type="text" placeholder="Write your message" autofocus autocomplete="off">
       <button>Send</button>
     </form>
-    <button id="send-location">Send Location</button>
+    <button id="send-location">Sending Location</button>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/javascript/libs/jquery-3.3.1.min.js"></script>
     <script src="/javascript/index.js"></script>
