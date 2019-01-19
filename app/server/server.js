@@ -1,3 +1,4 @@
+// const bootstrap = require('bootstrap');
 const path = require('path'); // build in module
 const http = require('http');
 const express = require('express');
@@ -5,7 +6,6 @@ const socketIO = require('socket.io');
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
 const {generateMessage, generateLocationMessage} = require('./utilities/message');
-
 
 var app = express();
 var server = http.createServer(app);
