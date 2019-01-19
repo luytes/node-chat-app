@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node server/server.js",
-    "test": "mocha server/**/*.test.js",
+    "start": "node app/server/server.js",
+    "test": "mocha app/server/**/*.test.js",
     "test-watch": "nodemon --exec 'npm test'"
   },
   "engines": {
@@ -14,12 +14,17 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bootstrap": "^4.2.1",
     "express": "^4.16.4",
+    "jquery": "^3.3.1",
+    "moment": "^2.23.0",
+    "popper.js": "^1.14.6",
     "socket.io": "^2.2.0"
   },
   "devDependencies": {
     "expect": "^23.6.0",
     "mocha": "^5.2.0",
-    "nodemon": "^1.18.9"
+    "nodemon": "^1.18.9",
+    "webpack": "^4.28.4"
   }
 }

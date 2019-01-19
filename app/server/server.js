@@ -1,3 +1,4 @@
+// const bootstrap = require('bootstrap');
 const path = require('path'); // build in module
 const http = require('http');
 const express = require('express');
@@ -5,7 +6,6 @@ const socketIO = require('socket.io');
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
 const {generateMessage, generateLocationMessage} = require('./utilities/message');
-
 
 var app = express();
 var server = http.createServer(app);
@@ -30,7 +30,7 @@ io.on('connection', (socket) => { // server and client keep chanel for as long a
     console.log('createMessage', message);
     // emits to every single connection
     io.emit('newMessage', generateMessage(message.from, message.text));
-    callback('This is from the server'); // server gets data back
+    callback(); // server gets data back
   });
 
   socket.on('createLocationMessage', (coordinates) => {
