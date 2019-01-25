@@ -16,12 +16,17 @@ function scrollToBottom () {
 };
 
 socket.on('connect', function () {
-  console.log("Connected to server ");
-  // EMIT EVENT
-  // socket.emit('createMessage', {
-  //   from: 'Kevin',
-  //   text: 'Hey Lisa!'
-  // });
+  var params = jQuery.deparam(window.location.search);
+  socket.emit('join', params, function (err) {
+    if (err) {
+      // manipulate which page user is on
+      alert(err);
+      // redirected back to homepacge
+      window.location.href = '/'
+    } else {
+      console.log('No Error');
+    }
+  }); // emited by client and listen to by the server
 });
 
 socket.on('disconnect', function () {
