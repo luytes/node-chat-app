@@ -3,9 +3,10 @@ const path = require('path'); // build in module
 const http = require('http');
 const express = require('express');
 const socketIO = require('socket.io');
+const {generateMessage, generateLocationMessage} = require('./utilities/message');
+const {isRealString} = require('./utilities/validation');
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
-const {generateMessage, generateLocationMessage} = require('./utilities/message');
 
 var app = express();
 var server = http.createServer(app);
@@ -21,10 +22,25 @@ io.on('connection', (socket) => { // server and client keep chanel for as long a
   //   text: 'Hey whats up',
   //   createdAt: 123
   // });
-  // socket.emit from admin to the chat app
-  socket.emit('newMessage', generateMessage('Admin', 'Welcome to the Chat App!'));
-// socket.broadcast.emit from admin to text new user joined
-  socket.broadcast.emit('newMessage', generateMessage('Admin', 'New User joined!'));
+
+  socket.on('join', (params, callback) => {
+    // validate data (name and room)
+    if (!isRealString(params.name) || !isRealString(params.room)) {
+      callback('name and room name are required!');
+    }
+    // emit chat messages to other people also in the room
+    socket.join(params.room);
+    // if you wanna leave a room -> socket.leave(params.room);
+    // io emit, emit to every single connected user
+    // in order to send to specific room, use to method -> io.to(params.room - room name).emit
+    // socket.broadcast -> sends message to everyone connected in socket.server except the person who emits it
+
+    // socket.emit from admin to the chat app
+    socket.emit('newMessage', generateMessage('Admin', 'Welcome to the Chat App!'));
+    // socket.broadcast.emit from admin to text new user joined
+    socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has joined!`));
+    callback();
+  });
 
   socket.on('createMessage', (message, callback) => { // this callback is the listener
     console.log('createMessage', message);
