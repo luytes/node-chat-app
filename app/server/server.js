@@ -5,12 +5,14 @@ const express = require('express');
 const socketIO = require('socket.io');
 const {generateMessage, generateLocationMessage} = require('./utilities/message');
 const {isRealString} = require('./utilities/validation');
+const {Users} = require('./utilities/users');
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
 
 var app = express();
 var server = http.createServer(app);
 var io = socketIO(server); // this "io" is our server!
+var users = new Users(); // now able to call all of user methods (add, remove get etc)
 
 app.use(express.static(publicPath));
 io.on('connection', (socket) => { // server and client keep chanel for as long as client want to
@@ -26,7 +28,7 @@ io.on('connection', (socket) => { // server and client keep chanel for as long a
   socket.on('join', (params, callback) => {
     // validate data (name and room)
     if (!isRealString(params.name) || !isRealString(params.room)) {
-      callback('name and room name are required!');
+      return callback('name and room name are required!');
     }
     // emit chat messages to other people also in the room
     socket.join(params.room);
@@ -34,7 +36,9 @@ io.on('connection', (socket) => { // server and client keep chanel for as long a
     // io emit, emit to every single connected user
     // in order to send to specific room, use to method -> io.to(params.room - room name).emit
     // socket.broadcast -> sends message to everyone connected in socket.server except the person who emits it
-
+    users.removeUser(socket.id); // if user joins the room, we remove them from previous rooms and add to new room
+    users.addUser(socket.id, params.name, params.room);
+    io.to(params.room).emit('updateUserList', users.getUserList(params.room));
     // socket.emit from admin to the chat app
     socket.emit('newMessage', generateMessage('Admin', 'Welcome to the Chat App!'));
     // socket.broadcast.emit from admin to text new user joined
@@ -54,7 +58,11 @@ io.on('connection', (socket) => { // server and client keep chanel for as long a
   });
 
   socket.on('disconnect', () => {
-    console.log("User was disconnected")
+    var user = users.removeUser(socket.id);
+    if (user) {
+      io.to(user.room).emit('Update User List', users.getUserList(user.room));
+      io.to(user.room).emit('newMessage', generateMessage('Admin', `${user.name} has left`));
+    }
   });
 });
 server.listen(port, () => {

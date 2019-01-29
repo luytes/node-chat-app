@@ -50,6 +50,10 @@ socket.on('newMessage', function (message) {
   scrollToBottom();
 });
 
+socket.on('updateUserList', function (user) { // user array as argument
+  console.log(user);
+});
+
 socket.on('newLocationMessage', function (message) {
   // console.log('NewLocationMessage', message);
   var formattedTime = moment(message.createdAt).format('h:mm a');
