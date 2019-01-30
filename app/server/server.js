@@ -47,14 +47,19 @@ io.on('connection', (socket) => { // server and client keep chanel for as long a
   });
 
   socket.on('createMessage', (message, callback) => { // this callback is the listener
-    console.log('createMessage', message);
-    // emits to every single connection
-    io.emit('newMessage', generateMessage(message.from, message.text));
+    var user = users.getUser(socket.id);
+    if (user && isRealString(message.text)) {
+      // emits to every single connection
+      io.to(user.room).emit('newMessage', generateMessage(user.name, message.text));
+    }
     callback(); // server gets data back
   });
 
   socket.on('createLocationMessage', (coordinates) => {
-    io.emit('newLocationMessage', generateLocationMessage('Admin', coordinates.latitude, coordinates.longitude));
+    var user = users.getUser(socket.id);
+    if (user) {
+      io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coordinates.latitude, coordinates.longitude));
+    }
   });
 
   socket.on('disconnect', () => {
