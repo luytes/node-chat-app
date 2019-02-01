@@ -36,8 +36,13 @@ io.on('connection', (socket) => { // server and client keep chanel for as long a
     // io emit, emit to every single connected user
     // in order to send to specific room, use to method -> io.to(params.room - room name).emit
     // socket.broadcast -> sends message to everyone connected in socket.server except the person who emits it
+    var allUsers = users.getUserList(params.room);
     users.removeUser(socket.id); // if user joins the room, we remove them from previous rooms and add to new room
-    users.addUser(socket.id, params.name, params.room);
+    if (!allUsers.includes(params.name)) {
+      users.addUser(socket.id, params.name, params.room);
+    } else {
+      return callback('name already in use!');
+    };
     io.to(params.room).emit('updateUserList', users.getUserList(params.room));
     // socket.emit from admin to the chat app
     socket.emit('newMessage', generateMessage('Admin', 'Welcome to the Chat App!'));
