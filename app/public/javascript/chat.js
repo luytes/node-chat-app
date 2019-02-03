@@ -17,6 +17,9 @@ function scrollToBottom () {
 
 socket.on('connect', function () {
   var params = jQuery.deparam(window.location.search);
+  params.name = capitalizeFirstLetter(params.name);
+  params.room = params.room.toLowerCase();
+  console.log(params);
   socket.emit('join', params, function (err) {
     if (err) {
       // manipulate which page user is on
